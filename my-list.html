@@ -1,0 +1,83 @@
+<link href="bower_components/polymer/polymer.html" rel="import">
+<link href="bower_components/paper-input/paper-input.html" rel="import">
+<link href="bower_components/paper-fab/paper-fab.html" rel="import">
+<link href="bower_components/iron-icons/iron-icons.html" rel="import">
+<link href="bower_components/paper-checkbox/paper-checkbox.html" rel="import">
+<link href="bower_components/iron-localstorage/iron-localstorage.html" rel="import">
+<link href="shared-css.html" rel="import">
+
+<dom-module id="my-list">
+	<template>
+		<style include="shared-css">
+		</style>
+		<style>
+			.todoList {
+				margin: 0 20px;
+			}
+		</style>
+		<div class="todoList">
+	    <paper-input label="Add a new task" value='{{item}}' id="input" on-keydown="addNewItemByEnter"></paper-input>
+			<paper-fab id="add" icon="add"></paper-fab>
+	    <ul id="ul"></ul>
+		</div>
+		<iron-localstorage name="my-app-storage" on-iron-localstorage-load-empty="initializeDefault"
+		value="{{storage}}"></iron-localstorage>
+		<ul id="ul">
+			<template is="dom-repeat" items="{{storage.items}}">
+				<li><paper-checkbox data-index="{{index}}" on-change="removeItem">{{item}}</paper-checkbox></li>
+			</template>
+		</ul>
+	</template>
+
+	<script>
+		Polymer({
+			is: 'my-list',
+			removeItem: function (event) {
+				this.unlisten(event.target, 'change', 'removeItem');
+				setTimeout(function(){
+					this.storage.items.splice(event.target.dataIndex, 1);
+					this.notifySplices('storage.items', [{
+						index: event.target.dataIndex,
+						removed: [this.item],
+						addedCount: 0
+					}]);
+				}.bind(this), 300);
+			},
+      addNewItem: function(){
+				this.storage.items.push(this.item);
+				this.notifySplices('storage.items', [{
+					index: this.storage.items.length - 1,
+					removed: [],
+					addedCount: 1
+				}]);
+				this.item = '';
+				this.$.input.focus();
+				this.$$('iron-localstorage').save();
+			},
+			addNewItemByEnter: function (event) {
+				if ((event.keyCode === 13) && (this.item !== '')) {
+					this.addNewItem();
+				}
+			},
+			isItEmpty: function(){
+				if (this.item === ''){
+					this.$.add.setAttribute('disabled', '');
+				} else {
+					this.$.add.removeAttribute('disabled');
+				}
+			},
+			initializeDefault: function(){
+				this.storage = {items: []};
+			},
+			listeners: {
+				'add.click': 'addNewItem'
+			},
+			observers: [
+				'isItEmpty(item)'
+			],
+			properties: {
+				storage: Object
+			}
+		});
+	</script>
+</dom-module>

@@ -1,0 +1,64 @@
+<link href="bower_components/polymer/polymer.html" rel="import">
+<link href="bower_components/paper-menu/paper-menu.html" rel="import">
+<link href="bower_components/iron-pages/iron-pages.html" rel="import">
+<link href="bower_components/app-route/app-route.html" rel="import">
+<link href="bower_components/app-route/app-location.html" rel="import">
+<link href="bower_components/paper-styles/classes/shadow.html" rel="import">
+<link href="bower_components/paper-styles/color.html" rel="import">
+<link href="my-list.html" rel="import">
+<link href="my-cities.html" rel="import">
+
+<dom-module id="app-test">
+	<template>
+		<style is="shadow.html"></style>
+		<style>
+			:host {
+				font-family: 'Roboto', arial;
+			}
+			paper-menu {
+				font-size: 20px;
+				margin: 0;
+				padding: 30px;
+				letter-spacing: 2px;
+				background-color: #3f51b5;
+				text-align: center;
+				text-transform: uppercase;
+			}
+			paper-item {
+				margin: 0 20px;
+				text-align: center;
+			}
+			a {
+				text-decoration: none;
+				color: #fff;
+			}
+			.list {
+				max-width: 900px;
+				margin: 0 auto;
+			}
+			iron-pages {
+				background-color: #FAFAFA;
+			}
+		</style>
+			<app-location route="{{route}}" use-hash-as-path></app-location>
+			<app-route data="{{data}}" pattern=":page" route="{{route}}"></app-route>
+
+		<div class="app">
+			<paper-menu class="shadow-elevation-4dp">
+				<paper-item><a href="#todoList">Todo-list</a></paper-item>
+				<paper-item><a href="#cities">Cities</a></paper-item>
+			</paper-menu>
+			<div class="list shadow-elevation-4dp">
+				<iron-pages attr-for-selected="name" selected="[[data.page]]" fallback-selection="todoList">
+					<div name="todoList"><my-list></my-list></div>
+					<div name="cities"><my-cities></my-cities></div>
+				</iron-pages>
+			</div>
+		</div>
+	</template>
+	<script>
+		Polymer({
+			is: 'app-test'
+		});
+	</script>
+</dom-module>

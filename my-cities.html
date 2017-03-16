@@ -1,0 +1,36 @@
+<link href="bower_components/polymer/polymer.html" rel="import">
+<link href="bower_components/iron-ajax/iron-ajax.html" rel="import">
+<link href="shared-css.html" rel="import">
+
+<dom-module id="my-cities">
+  <template>
+    <style include="shared-css">
+    </style>
+    <iron-ajax auto
+      on-response="handleResponse"
+      url="http://cities.jonkri.se/0.0.0/cities">
+    </iron-ajax>
+    <table>
+      <thead>
+          <tr>
+            <th>Stad</th>
+            <th>Antal invånare</th>
+          </tr>
+      </thead>
+      <template is="dom-repeat" items="{{cities}}">
+        <tr>
+          <td>{{item.name}}</td>
+          <td>{{item.population}}</td>
+        </tr>
+      </template>
+    </table>
+  </template>
+  <script>
+    Polymer ({
+      is: 'my-cities',
+      handleResponse: function (data) {
+        this.cities = data.detail.response.items;
+      }
+    });
+  </script>
+</dom-module>
